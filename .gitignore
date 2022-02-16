@@ -1,0 +1,4 @@
+*.pyc
+venv
+quiz_saas/db.sqlite3
+__pycache__
