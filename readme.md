@@ -36,7 +36,7 @@ This is a simple group of quiz apis that allow users to create quizzes, invite p
 
 # REST API
 
-The REST API to the quiz app is described below.
+The REST APIs to the quiz app is described below.
 
 ## Create user
 
@@ -68,10 +68,10 @@ The REST API to the quiz app is described below.
 
 ### Request
 
-`/quizzes`
+`POST /quizzes`
 
     curl --location --request POST 'http://127.0.0.1:8000/quizzes' \
-    --header 'Authorization: Token 28abd7081cc631a18dbd8ddcc6b2995a401dfba2' \
+    --header 'Authorization: Token your_token' \
     --header 'Content-Type: application/json' \
     --data-raw '{
         "name":"Example quiz",
@@ -114,7 +114,7 @@ The REST API to the quiz app is described below.
 `GET /quizzes`
 
     curl --location --request GET 'http://127.0.0.1:8000/quizzes' \
-    --header 'Authorization: Token youtoken'
+    --header 'Authorization: Token your_token'
 
 ### Response body
 
@@ -155,3 +155,192 @@ The REST API to the quiz app is described below.
             ]
         }
     ]
+
+## Get scores of the created quizzes
+
+### Request
+
+`GET /quizzes{quizz_id}/scores`.
+
+    curl --location --request GET 'http://127.0.0.1:8000/quizzes/36/scores' \
+    --header 'Authorization: Token your_token'
+
+
+### Body Response
+
+    [
+        {
+            "score": 75.0,
+            "user": {
+                "email": "test@testtest"
+            }
+        },
+        {
+            "score": 50.0,
+            "user": {
+                "email": "test2@testtest"
+            }
+        }
+    ]
+
+## Get my participations
+
+### Request
+
+`GET /participations?`.
+`GET /participations?filter={filter_value_for_quiz_name}`.
+
+    curl --location --request GET 'http://127.0.0.1:8000/participations' \
+    --header 'Authorization: Token your_token'
+
+
+### Body Response
+
+    [
+        {
+            "id": 3,
+            "quiz": {
+                "name": "First quiz",
+                "created": "2022-02-15T19:22:37.178565Z"
+            },
+            "progress": "COMPLETED"
+        },
+        {
+            "id": 4,
+            "quiz": {
+                "name": "Second quiz",
+                "created": "2022-02-15T18:10:15.110548Z"
+            },
+            "progress": "COMPLETED"
+        },
+
+        {
+            "id": 15,
+            "quiz": {
+                "name": "Third quiz",
+                "created": "2022-02-15T19:22:37.178565Z"
+            },
+            "progress": "IN_PROGRESS1/2"
+        }
+    ]
+
+## Get score of a participation
+
+### Request
+
+`GET /participations/{participation_id}/progress`.
+
+    curl --location --request GET 'http://127.0.0.1:8000/participations/3/progress' \
+    --header 'Authorization: Token your_token'
+
+
+### Body Response
+
+    {
+        "progress": "NOT_STARTED"
+    }
+
+## Get quiz by participation id
+
+### Request
+
+`GET /participations/{participation_id}/quiz`.
+
+    curl --location --request GET 'http://127.0.0.1:8000/participations/3/quiz' \
+    --header 'Authorization: Token your_token'
+
+
+### Body Response
+
+    {
+        "id": 36,
+        "name": "Third quiz",
+        "summary": "This is just for testing",
+        "questions": [
+            {
+                "id": 8,
+                "content": "What is the capital of Portugal?",
+                "answers": [
+                    {
+                        "id": 15,
+                        "content": "Porto"
+                    },
+                    {
+                        "id": 16,
+                        "content": "Lisbon"
+                    }
+                ]
+            },
+            {
+                "id": 9,
+                "content": "What is the color of the sky?",
+                "answers": [
+                    {
+                        "id": 17,
+                        "content": "Red"
+                    },
+                    {
+                        "id": 18,
+                        "content": "Blue"
+                    }
+                ]
+            }
+        ]
+    }
+
+## Filter created, quizzes, invited users, questions (to complete)
+
+### Request
+
+`GET /search`.
+`GET /search?filter={filter_value}`.
+
+    curl --location --request GET 'http://127.0.0.1:8000/participations/3/progress' \
+    --header 'Authorization: Token your_token'
+
+
+### Body Response
+
+    {
+    "quizzes": [
+            {
+                "id": 35,
+                "name": "Second quiz",
+                "summary": "This is just for testing"
+            }
+        ]
+    }
+
+## Select answer
+
+### Request
+
+`POST /participations/{participation_id}}/answers/{answer_id}`.
+
+    curl --location --request POST 'http://127.0.0.1:8000/participations/15/answers/18' \
+    --header 'Authorization: Token your_token'
+
+
+### Body Response
+
+    {
+        "message": "Answer successfuly selected"
+    }
+
+## Invite user to the quiz
+
+### Request
+
+`POST /invite/{quiz_id}`.
+
+    curl --location --request POST 'http://127.0.0.1:8000/invite/36' \
+    --header 'Authorization: Token your_token' \
+    --header 'Content-Type: application/json' \
+    --data-raw '{"email": "test@test.test"}'
+
+
+### Body Response
+
+    {
+        "message": "Invitation was successfully sent"
+    }
